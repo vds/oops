@@ -48,7 +48,7 @@ func (s *Receiver) Receive(listener *net.TCPListener) {
 	for {
 		select {
 		case <-s.c:
-			log.Println("stopping receiving from: ", listener.Addr())
+			log.Println("Stopping receiving from: %v.", listener.Addr())
 			listener.Close()
 			return
 		default:
@@ -61,7 +61,7 @@ func (s *Receiver) Receive(listener *net.TCPListener) {
 			}
 			log.Println(err)
 		}
-		log.Println(conn.RemoteAddr(), "connected")
+		log.Println(conn.RemoteAddr(), "Connected.")
 		s.waitGroup.Add(1)
 		go s.receive(conn)
 	}
@@ -74,13 +74,13 @@ func (s *Receiver) receive(conn *net.TCPConn) {
 	for {
 		select {
 		case <-s.c:
-			log.Println("disconnecting", conn.RemoteAddr())
+			log.Println("Disconnecting.", conn.RemoteAddr())
 			return
 		default:
 		}
 		conn.SetDeadline(time.Now().Add(1e9))
 		for {
-			log.Println("Receiving oops")
+			log.Println("Receiving oops.")
 			err := protocol.ReceiveOops(conn)
 			if err != nil {
 				log.Println(err)
@@ -90,7 +90,7 @@ func (s *Receiver) receive(conn *net.TCPConn) {
 					continue
 				}
 			}
-			log.Println("Sending ack")
+			log.Println("Sending ack.")
 			err = protocol.SendAck(conn)
 			if err != nil {
 				log.Println(err)
@@ -111,7 +111,7 @@ func main() {
 	servAddr := fmt.Sprintf("%s:%d", *server, *port)
 	tcpAddr, err := net.ResolveTCPAddr("tcp", servAddr)
 	if err != nil {
-		log.Fatalf("ResolveTCPAddr failed: %s\n", err)
+		log.Fatalf("resolvetcpaddr failed: %s\n", err)
 	}
 	listener, err := net.ListenTCP("tcp", tcpAddr)
 	if err != nil {

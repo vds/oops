@@ -20,27 +20,27 @@ var (
 func dispatch(conn *net.TCPConn, oopsFiles []os.FileInfo) (err error) {
 	log.Println("Start dispatching.")
 	for _, fi := range oopsFiles {
-		log.Printf("Dispatching: %s", fi.Name())
+		log.Printf("Dispatching: %s.", fi.Name())
 		oopsPath := path.Join(*oopsDir, fi.Name())
 		encodedOops, err := ioutil.ReadFile(oopsPath)
 		if err != nil {
 			log.Printf("Error reading oops file: %v\n", err)
 			return err
 		}
-		log.Println("sending oops")
+		log.Println("Sending oops.")
 		// protocol.SendOops(conn, encodedOops)
 		protocol.SendOops(conn, encodedOops)
 		if err != nil {
 			log.Println(err)
 			return err
 		}
-		log.Println("receiving ack")
+		log.Println("Receiving ack.")
 		protocol.ReceiveAck(conn)
 		if err != nil {
 			log.Println(err)
 			return err
 		}
-		log.Printf("Finished: %s", fi.Name())
+		log.Printf("Finished: %s.", fi.Name())
 	}
 	return
 }
@@ -55,10 +55,10 @@ func main() {
 
 	oopsFiles, err := ioutil.ReadDir(*oopsDir)
 	if err != nil {
-		log.Fatalf("Error reading oops directory: %v\n", err)
+		log.Fatalf("error reading oops directory: %v\n", err)
 	}
 	if len(oopsFiles) == 0 {
-		log.Println("No oops found")
+		log.Println("No oops found.")
 		return
 	}
 
@@ -66,7 +66,7 @@ func main() {
 	tcpAddr, err := net.ResolveTCPAddr("tcp", servAddr)
 	conn, err := net.DialTCP("tcp", nil, tcpAddr)
 	if err != nil {
-		log.Fatalf("Dial failed: %s\n", err)
+		log.Fatalf("dial failed: %s\n", err)
 	}
 	err = dispatch(conn, oopsFiles)
 	if err != nil {
