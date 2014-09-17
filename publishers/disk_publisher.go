@@ -22,7 +22,7 @@ type DiskPublisher struct {
 func (p DiskPublisher) Write(o oops.Oops) {
 	data, err := o.Marshal()
 	if err != nil {
-		panic(fmt.Sprintf("Cannot write oops to disk: %s", err))
+		panic(fmt.Sprintf("cannot write oops to disk: %s", err))
 	}
 	oopsPath := path.Join(p.OopsFolder, o.Id)
 	ioutil.WriteFile(oopsPath, data, 0600)

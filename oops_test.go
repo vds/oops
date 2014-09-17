@@ -19,19 +19,19 @@ func TestOopsPutError(t *testing.T) {
 	o.SetError(err, true)
 
 	if o.Stack == "" {
-		t.Error("Stack is empty.")
+		t.Error("stack is empty")
 	}
 
 	if o.Error != errorString {
-		t.Errorf("Wrong Error: %v.\n", o.Error)
+		t.Errorf("wrong error: %v", o.Error)
 	}
 
 	if o.ErrorType == "" {
-		t.Error("ErrorType is empty.")
+		t.Error("ErrorType is empty")
 	}
 
 	if o.Panic == false {
-		t.Error("ErrorType is empty.")
+		t.Error("ErrorType is empty")
 	}
 }
 
@@ -50,10 +50,10 @@ func TestOopsMarshal(t *testing.T) {
 	var o1 oops.Oops
 	err = dec.Decode(&o1)
 	if err != nil {
-		t.Errorf("Failed to decode: %s\n", err)
+		t.Errorf("failed to decode: %s", err)
 	}
 	if !reflect.DeepEqual(o0, o1) {
-		t.Errorf("Decoding does not match.")
+		t.Errorf("decoding does not match.")
 	}
 }
 
@@ -71,10 +71,10 @@ func TestOopsUnmarshal(t *testing.T) {
 	var o1 oops.Oops
 	err = o1.Unmarshal(encoded_oops)
 	if err != nil {
-		t.Errorf("Failed to decode: %s\n", err)
+		t.Errorf("failed to decode: %s", err)
 	}
 
 	if !reflect.DeepEqual(o0, o1) {
-		t.Errorf("Decoding does not match.")
+		t.Errorf("decoding does not match")
 	}
 }

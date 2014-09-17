@@ -19,7 +19,7 @@ func TestCreatioAndPublicationOfAOops(t *testing.T) {
 	e := errors.New(errorString)
 	tempFolder, err := ioutil.TempDir("/tmp", "oops")
 	if err != nil {
-		t.Error("Error creating temporary directory for oopses.")
+		t.Error("error creating temporary directory for oopses")
 	}
 	defer os.RemoveAll(tempFolder)
 	p := publishers.DiskPublisher{tempFolder}
@@ -27,16 +27,16 @@ func TestCreatioAndPublicationOfAOops(t *testing.T) {
 	id := of.NewOops(e, true)
 	matched, err := regexp.MatchString(`^OOPS-\S{8}-\S{4}-\S{4}-\S{4}-\S{12}$`, id)
 	if err != nil {
-		t.Error("Error creating regexp.")
+		t.Error("error creating regexp")
 	}
 	if !matched {
-		t.Error("Error matching regexp.")
+		t.Error("error matching regexp")
 	}
 	o, err := p.Read(path.Join(tempFolder, id))
 	if o.Error != errorString {
-		t.Error("Error matching error string.")
+		t.Error("error matching error string")
 	}
 	if o.Stack == "" {
-		t.Error("Error, empty stack.")
+		t.Error("error, empty stack")
 	}
 }
