@@ -19,29 +19,51 @@ var (
 	bACK = []byte(ACK)
 )
 
-// Send the length of the oops in bytes through the connection.
-func SendOopsLength(conn *net.TCPConn, oopsLength int64) (err error) {
+// Send the oops through the connection.
+func SendOops(conn *net.TCPConn, encodedOops []byte) (err error) {
+	oopsLength := int64(len(encodedOops))
 	buf := make([]byte, lengthSize)
 	binary.PutVarint(buf, oopsLength)
-	bytesSent, err := conn.Write(buf)
+	bytesSent, err := conn.Write(append(buf, encodedOops...))
 	if err != nil {
 		return err
 	}
-	if bytesSent != lengthSize {
-		return fmt.Errorf("sending oops length: sent %v bytes of %v", bytesSent, lengthSize)
+	if bytesSent != int(oopsLength) {
+		fmt.Errorf("sending oops: sent %v bytes of %v", bytesSent, oopsLength)
 	}
 	return
 }
 
-// Send the oops through the connection.
-func SendOops(conn *net.TCPConn, encodedOops []byte, l int64) (err error) {
-	bytesSent, err := conn.Write(encodedOops)
+//  Send the oops through the connection.
+func ReceiveOops(conn net.Conn) (err error) {
+
+	buf := make([]byte, lengthSize)
+	bytesReceived, err := conn.Read(buf)
+	if err != nil {
+		return
+	}
+	if bytesReceived != lengthSize {
+		return fmt.Errorf("oops length: read %v byte out of %v", bytesReceived, lengthSize)
+	}
+	r := bytes.NewReader(buf)
+	l, err := binary.ReadVarint(r)
+
+	buf = make([]byte, l)
+	bytesReceived, err = conn.Read(buf)
+	if err != nil {
+		return fmt.Errorf("receiving oops: %v", err)
+	}
+	if int64(bytesReceived) != l {
+		return fmt.Errorf("receiving oops: %v byte out of %v", bytesReceived, l)
+	}
+
+	// FIXME store oops somewhere
+	var oops oops.Oops
+	err = oops.Unmarshal(buf)
 	if err != nil {
 		return err
 	}
-	if bytesSent != int(l) {
-		fmt.Errorf("sending oops: sent %v bytes of %v", bytesSent, l)
-	}
+	fmt.Printf("%v\n", oops.Error)
 	return
 }
 
@@ -70,41 +92,5 @@ func ReceiveAck(conn *net.TCPConn) (err error) {
 	if string(buf) != ACK {
 		return fmt.Errorf("bad ack response: %v")
 	}
-	return
-}
-
-// Receive the length of the oops in bytes from the connection.
-func ReceiveOopsLength(conn net.Conn) (l int64, err error) {
-	buf := make([]byte, lengthSize)
-	bytesReceived, err := conn.Read(buf)
-	if err != nil {
-		return
-	}
-	if bytesReceived != lengthSize {
-		return l, fmt.Errorf("oops length: read %v byte out of %v", bytesReceived, lengthSize)
-	}
-	r := bytes.NewReader(buf)
-	l, err = binary.ReadVarint(r)
-	return
-}
-
-//  Send the oops through the connection.
-func ReceiveOops(conn net.Conn, l int64) (err error) {
-	buf := make([]byte, l)
-	bytesReceived, err := conn.Read(buf)
-	if err != nil {
-		return fmt.Errorf("receiving oops: %v", err)
-	}
-	if int64(bytesReceived) != l {
-		return fmt.Errorf("receiving oops: %v byte out of %v", bytesReceived, l)
-	}
-
-	// FIXME store oops somewhere
-	var oops oops.Oops
-	err = oops.Unmarshal(buf)
-	if err != nil {
-		return err
-	}
-	fmt.Printf("%v\n", oops.Error)
 	return
 }

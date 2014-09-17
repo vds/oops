@@ -27,22 +27,9 @@ func dispatch(conn *net.TCPConn, oopsFiles []os.FileInfo) (err error) {
 			log.Printf("Error reading oops file: %v\n", err)
 			return err
 		}
-
-		l := int64(len(encodedOops))
-		log.Println("sending length")
-		err = protocol.SendOopsLength(conn, l)
-		if err != nil {
-			log.Println(err)
-			return err
-		}
-		log.Println("receiving ack")
-		protocol.ReceiveAck(conn)
-		if err != nil {
-			log.Println(err)
-			return err
-		}
 		log.Println("sending oops")
-		protocol.SendOops(conn, encodedOops, l)
+		// protocol.SendOops(conn, encodedOops)
+		protocol.SendOops(conn, encodedOops)
 		if err != nil {
 			log.Println(err)
 			return err
