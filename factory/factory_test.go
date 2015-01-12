@@ -14,7 +14,7 @@ import (
 
 // Tests the whole workflow, from the creation of the Publisher, the OopsFactory, the creation of a
 // oops and the recording of information from an error from a panic.
-func TestCreatioAndPublicationOfAOops(t *testing.T) {
+func TestCreationAndPublicationOfAOops(t *testing.T) {
 	errorString := "this is an error"
 	e := errors.New(errorString)
 	tempFolder, err := ioutil.TempDir("/tmp", "oops")
