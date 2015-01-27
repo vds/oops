@@ -21,7 +21,7 @@ func (p InMemoryPublisher) Write(o oops.Oops) error {
 }
 
 // Read reads the binary marshalling from the disk.
-func (p InMemoryPublisher) Read(id string) (o *oops.Oops, err error) {
+func (p InMemoryPublisher) Read(id string) (*oops.Oops, error) {
 	o, ok := p.Storage[id]
 	if !ok {
 		return nil, errors.New("no oops with this id in the storage")

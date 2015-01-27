@@ -26,7 +26,7 @@ type OopsFactory struct {
 }
 
 // NewOops creates a new oops from and error or a panic and delegate the publisher to persiste said oops.
-func (of OopsFactory) NewOops(e error, panic bool) (id string) {
+func (of OopsFactory) NewOops(e error, panic bool) string {
 	o := oops.Oops{}
 	o.Id = _id()
 	o.SetError(e, panic)
