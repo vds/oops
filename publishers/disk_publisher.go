@@ -10,7 +10,7 @@ import (
 
 // Publisher is the componet in charge of persisting the oops.
 type Publisher interface {
-	Write(o oops.Oops)
+	Write(o oops.Oops) error
 }
 
 // DiskPublisher is a very simple publisher that is able to read and write the oops binary marshalling to and from the disk.
@@ -19,21 +19,30 @@ type DiskPublisher struct {
 }
 
 // Write writes the binary marshalling of a oops on the disk.
-func (p DiskPublisher) Write(o oops.Oops) {
+func (p DiskPublisher) Write(o oops.Oops) error {
 	data, err := o.Marshal()
 	if err != nil {
-		panic(fmt.Sprintf("cannot write oops to disk: %s", err))
+		return fmt.Errorf("cannot marshal oops: %s", err)
 	}
 	oopsPath := path.Join(p.OopsFolder, o.Id)
-	ioutil.WriteFile(oopsPath, data, 0600)
+	err = ioutil.WriteFile(oopsPath, data, 0600)
+	if err != nil {
+		return fmt.Errorf("cannot write oops to disk: %s", err)
+	}
+	return nil
 }
 
 // Read reads the binary marshalling from the disk.
-func (p DiskPublisher) Read(path string) (o oops.Oops, err error) {
-	encoded_oops, err := ioutil.ReadFile(path)
+func (p DiskPublisher) Read(id string) (*oops.Oops, error) {
+	o := oops.Oops{}
+	oopsPath := path.Join(p.OopsFolder, id)
+	encoded_oops, err := ioutil.ReadFile(oopsPath)
 	if err != nil {
-		return
+		return nil, err
 	}
 	err = o.Unmarshal(encoded_oops)
-	return
+	if err != nil {
+		return nil, err
+	}
+	return &o, nil
 }

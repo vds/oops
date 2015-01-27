@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"os"
-	"path"
 	"reflect"
 	"testing"
 
@@ -32,7 +31,10 @@ func TestDiskPublisherWrite(t *testing.T) {
 		t.Error("error, temporary directory not empty")
 	}
 	dp := publishers.DiskPublisher{tempFolder}
-	dp.Write(o)
+	err = dp.Write(o)
+	if err != nil {
+		t.Error("error writing the oops")
+	}
 	fileInfo, err = ioutil.ReadDir(tempFolder)
 	if err != nil {
 		t.Error("error reading temporary directory")
@@ -54,9 +56,15 @@ func TestDiskPublisherRead(t *testing.T) {
 	}
 	defer os.RemoveAll(tempFolder)
 	dp := publishers.DiskPublisher{tempFolder}
-	dp.Write(o0)
-	o1, err := dp.Read(path.Join(tempFolder, o0.Id))
-	if !reflect.DeepEqual(o0, o1) {
+	err = dp.Write(o0)
+	if err != nil {
+		t.Error("error writing oops")
+	}
+	o1, err := dp.Read(o0.Id)
+	if err != nil {
+		t.Error("error read oops")
+	}
+	if !reflect.DeepEqual(o0, *o1) {
 		t.Errorf("decoding does not match")
 	}
 }

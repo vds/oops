@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"os"
-	"path"
 	"regexp"
 	"testing"
 
@@ -12,7 +11,7 @@ import (
 	"github.com/vds/oops/publishers"
 )
 
-// Tests the whole workflow, from the creation of the Publisher, the OopsFactory, the creation of a
+// Tests the whole workflow, the creation of the Publisher, the OopsFactory, the creation of a
 // oops and the recording of information from an error from a panic.
 func TestCreationAndPublicationOfAOops(t *testing.T) {
 	errorString := "this is an error"
@@ -32,7 +31,7 @@ func TestCreationAndPublicationOfAOops(t *testing.T) {
 	if !matched {
 		t.Error("error matching regexp")
 	}
-	o, err := p.Read(path.Join(tempFolder, id))
+	o, err := p.Read(id)
 	if o.Error != errorString {
 		t.Error("error matching error string")
 	}

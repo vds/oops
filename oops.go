@@ -52,9 +52,9 @@ func (o Oops) Marshal() ([]byte, error) {
 // Unmarshal returns a gob decoding of the oops.
 func (o *Oops) Unmarshal(encoded_oops []byte) (err error) {
 	dec := gob.NewDecoder(bytes.NewReader(encoded_oops))
-	err = dec.Decode(&o)
+	err = dec.Decode(o)
 	if err != nil {
-		return
+		return err
 	}
-	return
+	return nil
 }
