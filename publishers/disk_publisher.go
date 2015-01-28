@@ -8,11 +8,6 @@ import (
 	"github.com/vds/oops"
 )
 
-// Publisher is the componet in charge of persisting the oops.
-type Publisher interface {
-	Write(o oops.Oops) error
-}
-
 // DiskPublisher is a very simple publisher that is able to read and write the oops binary marshalling to and from the disk.
 type DiskPublisher struct {
 	OopsFolder string
@@ -45,4 +40,8 @@ func (p DiskPublisher) Read(id string) (*oops.Oops, error) {
 		return nil, err
 	}
 	return &o, nil
+}
+
+func NewDiskPublisher(oopsFolder string) DiskPublisher {
+	return DiskPublisher{OopsFolder: oopsFolder}
 }

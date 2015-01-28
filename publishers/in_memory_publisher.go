@@ -28,3 +28,7 @@ func (p InMemoryPublisher) Read(id string) (*oops.Oops, error) {
 	}
 	return o, nil
 }
+
+func NewInMemoryPublisher() InMemoryPublisher {
+	return InMemoryPublisher{make(InMemoryOopsStorage)}
+}
