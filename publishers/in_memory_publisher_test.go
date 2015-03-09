@@ -3,6 +3,7 @@ package publishers_test
 import (
 	"errors"
 	"reflect"
+	"sync"
 	"testing"
 
 	"github.com/vds/oops"
@@ -16,7 +17,7 @@ func TestInMemoryPublisherWrite(t *testing.T) {
 	o.SetError(e, true)
 	o.Id = "oopsId"
 	s := make(publishers.InMemoryOopsStorage)
-	p := publishers.InMemoryPublisher{s}
+	p := publishers.InMemoryPublisher{s, sync.Mutex{}}
 	p.Write(o)
 	if !reflect.DeepEqual(o, *s[o.Id]) {
 		t.Error("oops not stored correctly")
@@ -30,7 +31,7 @@ func TestInMemoryPublisherRead(t *testing.T) {
 	o.SetError(e, true)
 	o.Id = "oopsId"
 	s := make(publishers.InMemoryOopsStorage)
-	p := publishers.InMemoryPublisher{s}
+	p := publishers.InMemoryPublisher{s, sync.Mutex{}}
 	p.Write(o)
 	newOops, err := p.Read(o.Id)
 	if err != nil {
