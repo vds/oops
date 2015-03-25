@@ -12,7 +12,7 @@ import (
 func _id() (id string) {
 	f, err := os.Open("/dev/urandom")
 	if err != nil {
-		panic("cannot open /dev/random")
+		panic("cannot open /dev/urandom")
 	}
 	b := make([]byte, 16)
 	f.Read(b)
