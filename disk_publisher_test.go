@@ -1,4 +1,4 @@
-package publishers_test
+package oops_test
 
 import (
 	"errors"
@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/vds/oops"
-	"github.com/vds/oops/publishers"
 )
 
 //Tests that the DiskPublisher can write a oops on the disk correctly.
@@ -30,7 +29,7 @@ func TestDiskPublisherWrite(t *testing.T) {
 	if len(fileInfo) != 0 {
 		t.Error("error, temporary directory not empty")
 	}
-	dp := publishers.DiskPublisher{tempFolder}
+	dp := oops.DiskPublisher{tempFolder}
 	err = dp.Write(o)
 	if err != nil {
 		t.Error("error writing the oops")
@@ -55,7 +54,7 @@ func TestDiskPublisherRead(t *testing.T) {
 		t.Error("error creating temporary directory for oopses")
 	}
 	defer os.RemoveAll(tempFolder)
-	dp := publishers.DiskPublisher{tempFolder}
+	dp := oops.DiskPublisher{tempFolder}
 	err = dp.Write(o0)
 	if err != nil {
 		t.Error("error writing oops")

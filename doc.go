@@ -12,7 +12,8 @@ Example
 	tempFolder, err := ioutil.TempDir("/tmp", "oops")
 	p := publishers.DiskPublisher{tempFolder}
 	of := factory.OopsFactory{p}
-	id := of.NewOops(err, true)
+	requestData := map[string]string{}
+	id := of.New(err, requestData)
 	// Log that an Oops was recorded, together with the Oops id
 	log.Printf("Oops! Oops id: %s\n", id)
 

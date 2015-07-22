@@ -1,11 +1,9 @@
-package publishers
+package oops
 
 import (
 	"fmt"
 	"io/ioutil"
 	"path"
-
-	"github.com/vds/oops"
 )
 
 // DiskPublisher is a very simple publisher that is able to read and write the oops binary marshalling to and from the disk.
@@ -14,7 +12,7 @@ type DiskPublisher struct {
 }
 
 // Write writes the binary marshalling of a oops on the disk.
-func (p DiskPublisher) Write(o oops.Oops) error {
+func (p DiskPublisher) Write(o Oops) error {
 	data, err := o.Marshal()
 	if err != nil {
 		return fmt.Errorf("cannot marshal oops: %s", err)
@@ -28,8 +26,8 @@ func (p DiskPublisher) Write(o oops.Oops) error {
 }
 
 // Read reads the binary marshalling from the disk.
-func (p DiskPublisher) Read(id string) (*oops.Oops, error) {
-	o := oops.Oops{}
+func (p DiskPublisher) Read(id string) (*Oops, error) {
+	o := Oops{}
 	oopsPath := path.Join(p.OopsFolder, id)
 	encoded_oops, err := ioutil.ReadFile(oopsPath)
 	if err != nil {

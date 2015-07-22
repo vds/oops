@@ -1,6 +1,4 @@
-package publishers
-
-import "github.com/vds/oops"
+package oops
 
 const (
 	InMemory = "in-memory"
@@ -9,6 +7,6 @@ const (
 
 // Publisher is the componet in charge of persisting the oops.
 type Publisher interface {
-	Write(o oops.Oops) error
-	Read(id string) (*oops.Oops, error)
+	Write(o Oops) error
+	Read(id string) (*Oops, error)
 }
