@@ -5,15 +5,18 @@ import (
 	"encoding/gob"
 	"reflect"
 	"runtime"
+	"time"
 )
 
 // Oops collects information about an error or a panic.
 type Oops struct {
-	Id        string
-	Stack     string
-	Error     string
-	ErrorType string
-	Panic     bool
+	Id             string
+	RequestDetails map[string]string
+	Time           time.Time
+	Stack          string
+	Error          string
+	ErrorType      string
+	Panic          bool
 }
 
 // SetError records the information about the error or the panic.

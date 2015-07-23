@@ -1,13 +1,11 @@
-package publishers
+package oops
 
 import (
 	"errors"
 	"sync"
-
-	"github.com/vds/oops"
 )
 
-type InMemoryOopsStorage map[string]*oops.Oops
+type InMemoryOopsStorage map[string]*Oops
 
 // InMemoryPublisher is a simple publisher that stores oopses in memory, convenient for testing.
 type InMemoryPublisher struct {
@@ -16,7 +14,7 @@ type InMemoryPublisher struct {
 }
 
 // Write writes the binary marshalling of a oops on the disk.
-func (p InMemoryPublisher) Write(o oops.Oops) error {
+func (p InMemoryPublisher) Write(o Oops) error {
 	p.M.Lock()
 	defer p.M.Unlock()
 	p.Storage[o.Id] = &o
@@ -25,7 +23,7 @@ func (p InMemoryPublisher) Write(o oops.Oops) error {
 }
 
 // Read reads the binary marshalling from the disk.
-func (p InMemoryPublisher) Read(id string) (*oops.Oops, error) {
+func (p InMemoryPublisher) Read(id string) (*Oops, error) {
 	p.M.Lock()
 	defer p.M.Unlock()
 	o, ok := p.Storage[id]

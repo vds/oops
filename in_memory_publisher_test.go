@@ -1,4 +1,4 @@
-package publishers_test
+package oops_test
 
 import (
 	"errors"
@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/vds/oops"
-	"github.com/vds/oops/publishers"
 )
 
 //Tests that the InMemoryOopsStorage can store an oops correctly.
@@ -16,8 +15,8 @@ func TestInMemoryPublisherWrite(t *testing.T) {
 	o := oops.Oops{}
 	o.SetError(e, true)
 	o.Id = "oopsId"
-	s := make(publishers.InMemoryOopsStorage)
-	p := publishers.InMemoryPublisher{s, sync.Mutex{}}
+	s := make(oops.InMemoryOopsStorage)
+	p := oops.InMemoryPublisher{s, sync.Mutex{}}
 	p.Write(o)
 	if !reflect.DeepEqual(o, *s[o.Id]) {
 		t.Error("oops not stored correctly")
@@ -30,8 +29,8 @@ func TestInMemoryPublisherRead(t *testing.T) {
 	o := oops.Oops{}
 	o.SetError(e, true)
 	o.Id = "oopsId"
-	s := make(publishers.InMemoryOopsStorage)
-	p := publishers.InMemoryPublisher{s, sync.Mutex{}}
+	s := make(oops.InMemoryOopsStorage)
+	p := oops.InMemoryPublisher{s, sync.Mutex{}}
 	p.Write(o)
 	newOops, err := p.Read(o.Id)
 	if err != nil {
