@@ -3,8 +3,6 @@ package oops
 import (
 	"bytes"
 	"encoding/gob"
-	"reflect"
-	"runtime"
 	"time"
 )
 
@@ -17,28 +15,6 @@ type Oops struct {
 	Error          string
 	ErrorType      string
 	Panic          bool
-}
-
-// SetError records the information about the error or the panic.
-func (o *Oops) SetError(e error, panic bool) {
-	o.Panic = panic
-	o.Error = e.Error()
-	stack := make([]byte, 1<<20)
-	for i := 0; ; i++ {
-		n := runtime.Stack(stack, true)
-		if n < len(stack) {
-			stack = stack[:n]
-			break
-		}
-		if len(stack) >= 64<<20 {
-			// Filled 64 MB - stop there.
-			break
-		}
-		stack = make([]byte, 2*len(stack))
-	}
-
-	o.Stack = string(stack)
-	o.ErrorType = reflect.TypeOf(e).String()
 }
 
 // Marshal returns a gob encoding of the oops.

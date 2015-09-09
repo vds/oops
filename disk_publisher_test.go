@@ -10,12 +10,11 @@ import (
 	"github.com/vds/oops"
 )
 
-//Tests that the DiskPublisher can write a oops on the disk correctly.
 func TestDiskPublisherWrite(t *testing.T) {
-	e := errors.New("this is an error")
-	o := oops.Oops{}
-	o.SetError(e, true)
-	o.Id = "oopsId"
+	o := oops.Oops{
+		Id:    "oopsId",
+		Error: errors.New("this is an error").Error(),
+	}
 	tempFolder, err := ioutil.TempDir("/tmp", "oops")
 	if err != nil {
 		t.Error("error creating temporary directory for oopses")
@@ -43,12 +42,11 @@ func TestDiskPublisherWrite(t *testing.T) {
 	}
 }
 
-//Tests that the DiskPublisher can read a oops from the disk correctly.
 func TestDiskPublisherRead(t *testing.T) {
-	e := errors.New("this is an error")
-	o0 := oops.Oops{}
-	o0.SetError(e, true)
-	o0.Id = "oopsId"
+	o0 := oops.Oops{
+		Id:    "oopsId",
+		Error: errors.New("this is an error").Error(),
+	}
 	tempFolder, err := ioutil.TempDir("/tmp", "oops")
 	if err != nil {
 		t.Error("error creating temporary directory for oopses")

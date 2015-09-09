@@ -3,6 +3,8 @@ package oops
 import (
 	"fmt"
 	"os"
+	"reflect"
+	"runtime"
 	"time"
 )
 
@@ -23,27 +25,71 @@ type Factory struct {
 	Publisher Publisher
 }
 
-// newOops creates a new oops from an error or a panic and delegate the publisher to persist
-// said oops.
-func (of Factory) newOops(e error, panic bool, requestDetails map[string]string) string {
-	o := Oops{
-		Id:             _id(),
-		Time:           time.Now(),
-		RequestDetails: requestDetails,
+// new creates a new oops from an error or a panic and calls the publisher's
+// Write method to persist it.
+func (f Factory) new(e error, isPanic bool, options ...Option) (string, error) {
+	o := &Oops{
+		Id:   _id(),
+		Time: time.Now(),
 	}
-	o.SetError(e, panic)
-	of.Publisher.Write(o)
-	return o.Id
+	o.Error = e.Error()
+	o.ErrorType = reflect.TypeOf(e).String()
+	o.Panic = isPanic
+	for _, option := range options {
+		option(o)
+	}
+	if err := f.Publisher.Write(*o); err != nil {
+		return "", nil
+	}
+	return o.Id, nil
 }
 
 // New creates a new oops from an error and delegates the publisher to persist
-// it.
-func (of Factory) New(e error, requestDetails map[string]string) string {
-	return of.newOops(e, false, requestDetails)
+// it, returning the OOPS ID if nothing goes wrong.
+func (f Factory) New(e error, options ...Option) (string, error) {
+	return f.new(e, false, options...)
 }
 
 // NewPanic creates a new oops for a panic and delegates the publisher to
-// persist it.
-func (of Factory) NewPanic(e error, requestDetails map[string]string) string {
-	return of.newOops(e, true, requestDetails)
+// persist it, returning the OOPS ID if nothing goes wrong.
+func (f Factory) NewPanic(e error, options ...Option) (string, error) {
+	return f.new(e, true, options...)
+}
+
+// Option is the signature of the optional functions passed to the Factory's
+// New method.
+type Option func(*Oops)
+
+// SetStack returns an Option that assigns the given stack trace to the Oops.
+func SetStack(stack string) Option {
+	return func(o *Oops) {
+		o.Stack = stack
+	}
+}
+
+// SetRequestDetails returns an Option that assigns the given map of request
+// details to the Oops.
+func SetRequestDetails(m map[string]string) Option {
+	return func(o *Oops) {
+		o.RequestDetails = m
+	}
+}
+
+// SetRuntimeStack is an Option that obtains stack traces from all goroutines
+// and assign that to Oops.Stack.
+func SetRuntimeStack(o *Oops) {
+	stack := make([]byte, 1<<20)
+	for i := 0; ; i++ {
+		n := runtime.Stack(stack, true)
+		if n < len(stack) {
+			stack = stack[:n]
+			break
+		}
+		if len(stack) >= 64<<20 {
+			// Filled 64 MB - stop there.
+			break
+		}
+		stack = make([]byte, 2*len(stack))
+	}
+	o.Stack = string(stack)
 }
