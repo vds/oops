@@ -11,10 +11,10 @@ import (
 
 //Tests that the InMemoryOopsStorage can store an oops correctly.
 func TestInMemoryPublisherWrite(t *testing.T) {
-	e := errors.New("this is an error")
-	o := oops.Oops{}
-	o.SetError(e, true)
-	o.Id = "oopsId"
+	o := oops.Oops{
+		Id:    "oopsId",
+		Error: errors.New("this is an error").Error(),
+	}
 	s := make(oops.InMemoryOopsStorage)
 	p := oops.InMemoryPublisher{s, sync.Mutex{}}
 	p.Write(o)
@@ -25,10 +25,10 @@ func TestInMemoryPublisherWrite(t *testing.T) {
 
 //Tests that the InMemoryOopsStorage can read an oops correctly.
 func TestInMemoryPublisherRead(t *testing.T) {
-	e := errors.New("this is an error")
-	o := oops.Oops{}
-	o.SetError(e, true)
-	o.Id = "oopsId"
+	o := oops.Oops{
+		Id:    "oopsId",
+		Error: errors.New("this is an error").Error(),
+	}
 	s := make(oops.InMemoryOopsStorage)
 	p := oops.InMemoryPublisher{s, sync.Mutex{}}
 	p.Write(o)

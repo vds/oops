@@ -1,8 +1,6 @@
 package oops_test
 
 import (
-	"bytes"
-	"encoding/gob"
 	"errors"
 	"reflect"
 	"testing"
@@ -10,71 +8,25 @@ import (
 	"github.com/vds/oops"
 )
 
-// Tests the creation of a oops and the recording of information from an error from a panic.
-func TestOopsPutError(t *testing.T) {
-
-	errorString := "this is an error"
-	err := errors.New(errorString)
-	o := oops.Oops{}
-	o.SetError(err, true)
-
-	if o.Stack == "" {
-		t.Error("stack is empty")
-	}
-
-	if o.Error != errorString {
-		t.Errorf("wrong error: %v", o.Error)
-	}
-
-	if o.ErrorType == "" {
-		t.Error("ErrorType is empty")
-	}
-
-	if o.Panic == false {
-		t.Error("ErrorType is empty")
-	}
-}
-
-// Tests the binary marshalling of a oops.
-func TestOopsMarshal(t *testing.T) {
-
+func TestOopsMarshalAndUnmarshal(t *testing.T) {
 	err := errors.New("this is an error")
-	o0 := oops.Oops{}
-	o0.SetError(err, true)
-
-	encoded_oops, err := o0.Marshal()
-	if err != nil {
-		t.Error(err)
+	o0 := oops.Oops{
+		Error:          err.Error(),
+		Panic:          true,
+		Stack:          "stack",
+		RequestDetails: map[string]string{"foo": "bar"},
 	}
-	dec := gob.NewDecoder(bytes.NewReader(encoded_oops))
-	var o1 oops.Oops
-	err = dec.Decode(&o1)
+
+	encoded, err := o0.Marshal()
 	if err != nil {
-		t.Errorf("failed to decode: %s", err)
-	}
-	if !reflect.DeepEqual(o0, o1) {
-		t.Errorf("decoding does not match.")
-	}
-}
-
-// Tests the binary unmarshalling of a oops.
-func TestOopsUnmarshal(t *testing.T) {
-
-	err := errors.New("this is an error")
-	o0 := oops.Oops{}
-	o0.SetError(err, true)
-
-	encoded_oops, err := o0.Marshal()
-	if err != nil {
-		t.Error(err)
+		t.Fatalf("failed to marshal: %s", err)
 	}
 	var o1 oops.Oops
-	err = o1.Unmarshal(encoded_oops)
+	err = o1.Unmarshal(encoded)
 	if err != nil {
-		t.Errorf("failed to decode: %s", err)
+		t.Fatalf("failed to unmarshal: %s", err)
 	}
-
 	if !reflect.DeepEqual(o0, o1) {
-		t.Errorf("decoding does not match")
+		t.Errorf("unmarshalled OOPS does not match original one.")
 	}
 }
