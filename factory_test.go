@@ -10,7 +10,7 @@ import (
 	"github.com/vds/oops"
 )
 
-// Tests the whole workflow, the creation of the Publisher, the OopsFactory, the creation of a
+// Tests the whole workflow, the creation of the Publisher, the Factory, the creation of a
 // oops and the recording of information from an error from a panic.
 func TestCreationAndPublicationOfAOops(t *testing.T) {
 	errorString := "this is an error"
@@ -21,7 +21,7 @@ func TestCreationAndPublicationOfAOops(t *testing.T) {
 	}
 	defer os.RemoveAll(tempFolder)
 	p := oops.DiskPublisher{tempFolder}
-	of := oops.OopsFactory{p}
+	of := oops.Factory{p}
 	id := of.New(e, map[string]string{})
 	matched, err := regexp.MatchString(`^OOPS-\S{8}-\S{4}-\S{4}-\S{4}-\S{12}$`, id)
 	if err != nil {

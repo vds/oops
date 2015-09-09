@@ -18,14 +18,14 @@ func _id() (id string) {
 	return fmt.Sprintf("OOPS-%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
 }
 
-// OopsFactory is the component that holds the configuration and that is used to create the oopses.
-type OopsFactory struct {
+// Factory is the component that holds the configuration and that is used to create the oopses.
+type Factory struct {
 	Publisher Publisher
 }
 
 // newOops creates a new oops from an error or a panic and delegate the publisher to persist
 // said oops.
-func (of OopsFactory) newOops(e error, panic bool, requestDetails map[string]string) string {
+func (of Factory) newOops(e error, panic bool, requestDetails map[string]string) string {
 	o := Oops{
 		Id:             _id(),
 		Time:           time.Now(),
@@ -38,12 +38,12 @@ func (of OopsFactory) newOops(e error, panic bool, requestDetails map[string]str
 
 // New creates a new oops from an error and delegates the publisher to persist
 // it.
-func (of OopsFactory) New(e error, requestDetails map[string]string) string {
+func (of Factory) New(e error, requestDetails map[string]string) string {
 	return of.newOops(e, false, requestDetails)
 }
 
 // NewPanic creates a new oops for a panic and delegates the publisher to
 // persist it.
-func (of OopsFactory) NewPanic(requestDetails map[string]string) string {
-	return of.newOops(nil, true, requestDetails)
+func (of Factory) NewPanic(e error, requestDetails map[string]string) string {
+	return of.newOops(e, true, requestDetails)
 }
